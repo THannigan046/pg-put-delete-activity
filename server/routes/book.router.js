@@ -43,6 +43,25 @@ router.post('/',  (req, res) => {
 // TODO - DELETE 
 // Removes a book to show that it has been read
 // Request must include a parameter indicating what book to update - the id
+router.delete('/:id', (req, res) => {
+  console.log('id is', req.params.id);
+  
+  let queryText = `
+  DELETE FROM books
+  WHERE id=$1;
+  `;
 
+  let queryParams = [
+    req.params.id
+  ]
+  pool.query(queryText, queryParams)
+    .then((dbRes) => {
+      res.sendStatus(204);
+    })
+    .catch((err) => {
+      console.log('delete failed', console.err);
+
+    })
+})
 
 module.exports = router;
