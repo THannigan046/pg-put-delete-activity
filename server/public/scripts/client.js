@@ -7,10 +7,32 @@ $(document).ready(function(){
 function addClickHandlers() {
   $('#submitBtn').on('click', handleSubmit);
   $(document).on('click', '.deleteButton', onDeleteBook)
+  $(document).on('click', '.isReadButton', onReadButton)
   // TODO - Add code for edit & delete buttons
   
 }
 
+function onReadButton() {
+  let bookId = $(this).parents('tr').data('id');
+  let isRead = $(this).parents('tr').data('isRead');
+  $.ajax({
+    method: 'PUT',
+    url: `/books/${bookId}`,
+    //pass updated version to server 
+    //ie transfer a representation of state
+    data: {
+      isRead: isRead = true
+    }
+  })
+    .then(() => {
+      console.log('put success');
+      refreshBooks();
+    })
+    .catch((err) => {
+      console.log('put failed', err);
+
+    })
+}
 function onDeleteBook() {
   let bookId = $(this).parents('tr').data('id');
   console.log('onDeleteBook', bookId); 
@@ -75,10 +97,12 @@ function renderBooks(books) {
     let book = books[i];
     // For each book, append a new row to our table
     $('#bookShelf').append(`
-      <tr data-id = "${books[i].id}">
+      <tr data-id = "${books[i].id}" tr data-id = "${book.isRead}">
         <td>${book.title}</td>
         <td>${book.author}</td>
+        <td>${book.isRead}</td>
         <td><button class="deleteButton">delete</button></td>
+        <td><button class="isReadButton">Mark as read</button></td>
       </tr>
     `);
   }
